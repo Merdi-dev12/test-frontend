@@ -1,6 +1,5 @@
 import { Component, inject, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AdminAccess } from '../../core/admin-access';
 import { apiErrorMessage } from '../../core/api-error';
 import type { Product } from '../../core/models';
 import { Products } from '../../core/products';
@@ -13,7 +12,6 @@ import { Products } from '../../core/products';
 })
 export class CreateProduct {
   private readonly products = inject(Products);
-  private readonly admin = inject(AdminAccess);
 
   readonly created = output<Product>();
   readonly busy = signal(false);
@@ -22,7 +20,6 @@ export class CreateProduct {
     name: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
     priceCdf: new FormControl<number | null>(null, [Validators.required, Validators.min(0), Validators.max(2147483647), Validators.pattern(/^\d+$/)]),
     stock: new FormControl<number | null>(null, [Validators.required, Validators.min(0), Validators.max(2147483647), Validators.pattern(/^\d+$/)]),
-    adminKey: new FormControl(this.admin.key(), { nonNullable: true }),
   });
 
   submit(): void {
@@ -31,14 +28,13 @@ export class CreateProduct {
       this.form.markAllAsTouched();
       return;
     }
-    const { name, priceCdf, stock, adminKey } = this.form.getRawValue();
+    const { name, priceCdf, stock } = this.form.getRawValue();
     if (priceCdf === null || stock === null) return;
     if (!name.trim()) {
       this.form.controls.name.setErrors({ required: true });
       return;
     }
 
-    this.admin.setKey(adminKey);
     this.busy.set(true);
     this.error.set('');
     this.products.create({ name: name.trim(), priceCdf, stock }).subscribe({
