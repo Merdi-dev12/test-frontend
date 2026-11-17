@@ -1,0 +1,35 @@
+<div class="site-shell">
+  <div class="announcement">
+    <span class="announcement__dot"></span>
+    Une expérience de paiement en environnement sandbox
+    <span class="announcement__right">Kinshasa · RDC</span>
+  </div>
+
+  <header class="site-header">
+    <a class="brand" routerLink="/" aria-label="Ziko, retour au catalogue">
+      <span class="brand__mark">Z<span>✦</span></span>
+      <span class="brand__name">ziko<span class="brand__period">.</span></span>
+    </a>
+
+    <nav class="site-nav" aria-label="Navigation principale">
+      <a routerLink="/" fragment="catalogue">Explorer</a>
+      <a routerLink="/" fragment="gestion">Espace gestion</a>
+    </nav>
+
+    <a class="header-action" routerLink="/" fragment="catalogue">
+      Voir la boutique <span aria-hidden="true">↗</span>
+    </a>
+  </header>
+
+  <main>
+    <router-outlet />
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <span class="footer-brand">ziko<span>.</span></span>
+      <p>Une boutique de démonstration, pensée pour un parcours simple.</p>
+    </div>
+    <span>Kinshasa, République démocratique du Congo</span>
+  </footer>
+</div>
