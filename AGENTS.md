@@ -16,7 +16,7 @@
 
 ## Données et paiement
 - Appeler le backend avec des chemins relatifs `/api`. Le proxy de développement se règle dans `proxy.conf.cjs` ; aucune URL de service en dur dans les composants.
-- Ne jamais placer de jeton pawaPay dans le frontend. La clé de gestion des produits, si utilisée, reste en mémoire : ne pas la stocker dans le navigateur ni la commiter.
+- Ne jamais placer de jeton pawaPay dans le frontend. La création de produits ne demande aucune clé dans ce parcours de démonstration.
 - Une réponse d'initiation `202` ne signifie pas que la commande est payée. Afficher l'attente, consulter le statut et ne montrer la réussite qu'après confirmation finale.
 - Conserver le même identifiant de commande et les mêmes paramètres lors d'un renvoi de paiement. Ne pas créer de nouvelle commande automatiquement après une réponse réseau incertaine.
 - Présenter les erreurs du backend clairement, sans exposer de secrets ni de détails internes.

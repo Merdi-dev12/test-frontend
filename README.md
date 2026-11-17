@@ -7,7 +7,6 @@ Une interface TypeScript pour parcourir les produits, créer une commande d'un p
 - Node.js compatible avec Angular 22 et npm
 - Le backend Ziko démarré, par exemple avec `docker compose up --build -d` dans le dépôt backend
 - Pour tester un paiement sandbox, le backend configuré avec `PAWAPAY_BASE_URL` et `PAWAPAY_API_TOKEN` dans son `.env` privé
-- Pour créer un produit lorsque le backend protège cette route : sa valeur privée `ADMIN_API_KEY`
 
 ## Démarrer sur Windows
 
@@ -20,7 +19,7 @@ Une interface TypeScript pour parcourir les produits, créer une commande d'un p
    ```
 
 3. Ouvrir `http://localhost:4200`. Le serveur Angular relaie les appels `/api` vers le backend par `proxy.conf.cjs`. Garder les deux terminaux ouverts.
-4. Sur la page, saisir la valeur de ADMIN_API_KEY du .env backend dans **Clé administrateur du backend** pour ajouter un produit. La clé est utilisée pour l'en-tête `x-admin-key` et reste uniquement en mémoire.
+4. Sur la page, renseigner le nom, le prix en CDF et le stock, puis cliquer sur **Ajouter au catalogue**. Aucune clé ne vous est demandée.
 5. Choisir une quantité et cliquer **Commander**. La page commande affiche le total CDF.
 6. Choisir un opérateur, saisir un numéro local de 10 chiffres commençant par 0, puis lancer le paiement sur la page de commande. Le formulaire vérifie les préfixes Vodacom 081/082/083/086, Airtel 097/098/099 et Orange 080/084/085/089, puis transmet automatiquement le numéro au format 243 suivi de 9 chiffres. L'interface attend le résultat final avant d'afficher « payée ». Le bouton de renvoi d'une tentative active réutilise la même commande et les mêmes paramètres. Après une réponse réseau incertaine, vérifier d'abord le statut ; l'interface bloque un nouveau paiement avec des paramètres différents.
 
@@ -35,7 +34,7 @@ $env:ZIKO_API_TARGET='http://127.0.0.1:3001'
 npm start
 ```
 
-Le proxy ne sert qu'avec `ng serve`. Pour déployer le build, servir le frontend et relayer `/api` vers le backend depuis le même domaine. La clé `ADMIN_API_KEY` du backend ne doit jamais être intégrée au build.
+Le proxy ne sert qu'avec `ng serve`. Pour déployer le build, servir le frontend et relayer `/api` vers le backend depuis le même domaine.
 
 ## Parcours et routes
 
@@ -55,13 +54,12 @@ src/app/
   core/
     models.ts                     Contrats de l'API
     api-error.ts                  Traduction des erreurs HTTP
-    admin-access.ts               Clé de gestion en mémoire
     products.ts, orders.ts,
     payments.ts                   Services @Service() avec inject(HttpClient)
   features/catalog/
     home.*                        Catalogue, pagination et parcours de commande
     product-card.*                Présentation d'un produit et choix de quantité
-    create-product.*              Formulaire de gestion
+    create-product.*              Formulaire de création de produit
   features/order/
     order.*                       État de la commande et suivi de la tentative
     payment-form.*                Saisie de l'opérateur et du numéro
@@ -81,4 +79,4 @@ Tester aussi dans le navigateur : création d'un produit, commande, paiement en 
 
 ## Limite du prototype
 
-L'entrée d'une clé administrateur dans le navigateur sert uniquement à la démonstration. Une boutique publique aurait besoin d'une authentification et d'autorisations côté serveur avant d'exposer ce formulaire.
+La création de produits est volontairement ouverte pour le test. Une boutique publique aurait besoin d’une authentification et d’autorisations côté serveur avant d’exposer ce formulaire durablement.
