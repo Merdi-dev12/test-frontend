@@ -1,0 +1,15 @@
+.welcome {
+  min-height: 65vh;
+  padding-block: 120px;
+}
+h1 {
+  max-width: 700px;
+  margin: 24px 0;
+  font-size: clamp(44px, 6vw, 80px);
+  line-height: 1.05;
+}
+p:last-child {
+  max-width: 540px;
+  color: #697873;
+  line-height: 1.7;
+}
