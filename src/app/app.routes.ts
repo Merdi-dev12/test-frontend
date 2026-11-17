@@ -6,5 +6,10 @@ export const routes: Routes = [
     title: 'Boutique · Ziko',
     loadComponent: () => import('./features/catalog/home').then((page) => page.Home),
   },
+  {
+    path: 'orders/:id',
+    title: 'Commande · Ziko',
+    loadComponent: () => import('./features/order/order').then((page) => page.OrderPage),
+  },
   { path: '**', redirectTo: '' },
 ];

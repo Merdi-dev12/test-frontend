@@ -1,0 +1,70 @@
+<div class="order-page">
+  <div class="order-page__top section-wrap">
+    <a class="back-link" routerLink="/">← Retour au catalogue</a>
+    <span class="order-page__tag">PARCOURS DE COMMANDE</span>
+  </div>
+
+  @if (loading()) {
+    <div class="section-wrap loading-state" role="status">Chargement de la commande…</div>
+  } @else if (order(); as current) {
+    <section class="order-heading section-wrap">
+      <div>
+        <span class="eyebrow"><span class="eyebrow__line"></span> VOTRE COMMANDE</span>
+        <h1>Presque entre<br><em>vos mains.</em></h1>
+        <p>Retrouve ici le récapitulatif et le statut de ta commande.</p>
+      </div>
+      <div class="order-heading__art" aria-hidden="true"><span>✳</span></div>
+    </section>
+
+    <div class="journey section-wrap" aria-label="Étapes de la commande">
+      <div class="journey__step journey__step--done"><b>✓</b><span>Commande créée</span></div>
+      <span class="journey__line"></span>
+      <div class="journey__step" [class.journey__step--done]="current.status === 'PAID'"
+        [class.journey__step--current]="current.status === 'PENDING'">
+        <b>{{ current.status === 'PAID' ? '✓' : '2' }}</b>
+        <span>{{ current.status === 'PAID' ? 'Paiement confirmé' : 'En attente de paiement' }}</span>
+      </div>
+    </div>
+
+    <div class="checkout-grid section-wrap">
+      <section class="status-panel">
+        @if (current.status === 'PAID') {
+          <span class="status-panel__icon status-panel__icon--paid">✓</span>
+          <span class="eyebrow">COMMANDE PAYÉE</span>
+          <h2>Merci pour<br><em>votre commande.</em></h2>
+          <p>Le statut de cette commande a été confirmé par le backend.</p>
+          @if (current.paidAt) {
+            <small>Confirmée le {{ current.paidAt | date:'dd MMMM yyyy à HH:mm' }}</small>
+          }
+        } @else {
+          <span class="status-panel__icon">✳</span>
+          <span class="eyebrow">COMMANDE CRÉÉE</span>
+          <h2>Tout est prêt<br><em>pour la suite.</em></h2>
+          <p>Cette commande est en attente de paiement. Le paiement Mobile Money n'est pas encore disponible ici.</p>
+        }
+        <button type="button" (click)="refresh()">Actualiser le statut ↻</button>
+        @if (error()) { <p class="error-banner" role="alert">{{ error() }}</p> }
+      </section>
+
+      <aside class="summary">
+        <span class="summary__eyebrow">RÉCAPITULATIF</span>
+        <div class="summary__illustration" aria-hidden="true"><span>z<span>✦</span></span></div>
+        <h2>{{ productName() || 'Votre sélection' }}</h2>
+        <p class="summary__id">Commande {{ current.id }}</p>
+        <div class="summary__row"><span>Quantité</span><strong>{{ current.quantity }}</strong></div>
+        <div class="summary__row"><span>Prix unitaire</span><strong>{{ current.unitPriceCdf | currency:'CDF':'code':'1.0-0' }}</strong></div>
+        <div class="summary__divider"></div>
+        <div class="summary__total"><span>Total</span><strong>{{ current.totalCdf | currency:'CDF':'code':'1.0-0' }}</strong></div>
+        <div class="summary__status" [class.summary__status--paid]="current.status === 'PAID'">
+          <span></span>{{ current.status === 'PAID' ? 'Payée' : 'En attente' }}
+        </div>
+        <p class="summary__footnote">Créée le {{ current.createdAt | date:'dd MMM yyyy à HH:mm' }}</p>
+      </aside>
+    </div>
+  } @else {
+    <div class="section-wrap error-banner" role="alert">
+      {{ error() || 'Cette commande est introuvable.' }}
+      <a routerLink="/">Retour au catalogue</a>
+    </div>
+  }
+</div>

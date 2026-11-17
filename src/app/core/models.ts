@@ -19,3 +19,14 @@ export interface NewProduct {
   priceCdf: number;
   stock: number;
 }
+
+export interface Order {
+  id: string;
+  productId: string;
+  quantity: number;
+  unitPriceCdf: number;
+  totalCdf: number;
+  status: 'PENDING' | 'PAID';
+  createdAt: string;
+  paidAt: string | null;
+}
