@@ -20,9 +20,9 @@ Une interface TypeScript pour parcourir les produits, créer une commande d'un p
    ```
 
 3. Ouvrir `http://localhost:4200`. Le serveur Angular relaie les appels `/api` vers le backend par `proxy.conf.cjs`. Garder les deux terminaux ouverts.
-4. Sur la page, saisir la clé de gestion dans **Espace gestion** pour ajouter un produit. La clé est utilisée pour l'en-tête `x-admin-key` et reste uniquement en mémoire.
+4. Sur la page, saisir la valeur de ADMIN_API_KEY du .env backend dans **Clé administrateur du backend** pour ajouter un produit. La clé est utilisée pour l'en-tête `x-admin-key` et reste uniquement en mémoire.
 5. Choisir une quantité et cliquer **Commander**. La page commande affiche le total CDF.
-6. Choisir un opérateur, saisir un numéro au format `243` suivi de 9 chiffres, puis lancer le paiement. L'interface attend le résultat final avant d'afficher « payée ». Le bouton de renvoi d'une tentative active réutilise la même commande et les mêmes paramètres. Après une réponse réseau incertaine, vérifier d'abord le statut ; l'interface bloque un nouveau paiement avec des paramètres différents.
+6. Choisir un opérateur, saisir un numéro local de 10 chiffres commençant par 0, puis lancer le paiement sur la page de commande. Le formulaire vérifie les préfixes Vodacom 081/082/083/086, Airtel 097/098/099 et Orange 080/084/085/089, puis transmet automatiquement le numéro au format 243 suivi de 9 chiffres. L'interface attend le résultat final avant d'afficher « payée ». Le bouton de renvoi d'une tentative active réutilise la même commande et les mêmes paramètres. Après une réponse réseau incertaine, vérifier d'abord le statut ; l'interface bloque un nouveau paiement avec des paramètres différents.
 
 Les numéros et opérateurs acceptés par la sandbox dépendent de sa configuration. Aucun jeton fournisseur ne doit être ajouté à ce projet. Une réponse d'initiation ne confirme pas le débit : seule la commande PAID après vérification finale déclenche l'écran de réussite.
 
@@ -44,7 +44,7 @@ Le proxy ne sert qu'avec `ng serve`. Pour déployer le build, servir le frontend
 | `/` | Catalogue paginé, création de produit et création de commande |
 | `/orders/:id` | Récapitulatif, initiation et suivi du paiement |
 
-Le backend ne fournit pas de connexion client ni de panier : le parcours du test concerne une commande pour un seul produit. La liste des produits expose le stock physique ; une réservation simultanée peut encore faire refuser une commande, avec un message d'erreur visible.
+Le backend ne fournit pas de connexion client ni de panier : le parcours du test concerne une commande pour un seul produit. Le bouton « Commander » crée la commande ; le paiement est lancé séparément sur /orders/:id. La liste des produits expose le stock physique ; une réservation simultanée peut encore faire refuser une commande, avec un message d'erreur visible.
 
 ## Structure
 
