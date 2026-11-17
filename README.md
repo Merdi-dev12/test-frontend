@@ -1,64 +1,74 @@
-# Ziko Boutique — catalogue et commandes
+# Ziko Boutique — frontend Angular
 
-Frontend Angular 22 de la démonstration Ziko. Il permet de consulter les produits, d'en créer, de choisir une quantité et de créer une commande. Le paiement Mobile Money sera ajouté dans une branche dédiée.
+Une interface TypeScript pour parcourir les produits, créer une commande d'un produit et suivre un paiement Mobile Money **dans la sandbox pawaPay**. Ce dépôt est séparé de l'API Express/PostgreSQL.
 
 ## Prérequis
 
 - Node.js compatible avec Angular 22 et npm
-- Le backend Ziko démarré avec PostgreSQL
-- La valeur privée de `ADMIN_API_KEY` pour créer des produits si cette route est protégée
+- Le backend Ziko démarré, par exemple avec `docker compose up --build -d` dans le dépôt backend
+- Pour tester un paiement sandbox, le backend configuré avec `PAWAPAY_BASE_URL` et `PAWAPAY_API_TOKEN` dans son `.env` privé
+- Pour créer un produit lorsque le backend protège cette route : sa valeur privée `ADMIN_API_KEY`
 
-## Démarrer en local
+## Démarrer sur Windows
 
-Dans le dépôt backend, démarrer les services :
+1. Démarrer le backend et vérifier `http://localhost:3000/health` : il doit répondre `{"status":"ok"}`.
+2. Dans PowerShell, ouvrir ce dossier et lancer :
 
-```powershell
-docker compose up --build -d
-```
+   ```powershell
+   npm ci
+   npm start
+   ```
 
-Vérifier que `http://localhost:3000/health` répond `{"status":"ok"}`. Dans ce dépôt frontend :
+3. Ouvrir `http://localhost:4200`. Le serveur Angular relaie les appels `/api` vers le backend par `proxy.conf.cjs`. Garder les deux terminaux ouverts.
+4. Sur la page, saisir la clé de gestion dans **Espace gestion** pour ajouter un produit. La clé est utilisée pour l'en-tête `x-admin-key` et reste uniquement en mémoire.
+5. Choisir une quantité et cliquer **Commander**. La page commande affiche le total CDF.
+6. Choisir un opérateur, saisir un numéro au format `243` suivi de 9 chiffres, puis lancer le paiement. L'interface attend le résultat final avant d'afficher « payée ». Le bouton de renvoi d'une tentative active réutilise la même commande et les mêmes paramètres. Après une réponse réseau incertaine, vérifier d'abord le statut ; l'interface bloque un nouveau paiement avec des paramètres différents.
 
-```powershell
-npm ci
-npm start
-```
+Les numéros et opérateurs acceptés par la sandbox dépendent de sa configuration. Aucun jeton fournisseur ne doit être ajouté à ce projet. Une réponse d'initiation ne confirme pas le débit : seule la commande PAID après vérification finale déclenche l'écran de réussite.
 
-Ouvrir `http://localhost:4200`. Dans **Espace gestion**, saisir la clé de gestion pour créer un produit. Cette clé est envoyée dans `x-admin-key` et conservée uniquement en mémoire. Choisir ensuite la quantité sur une carte produit et cliquer **Commander**. La page `/orders/:id` lit le récapitulatif depuis le backend et permet d'actualiser son statut.
+## Configuration du backend
 
-Le proxy de développement transmet `/api` et `/health` à `http://127.0.0.1:3000`. Pour un autre port backend, définir `ZIKO_API_TARGET` avant `npm start` :
+Le frontend appelle les chemins relatifs `/api`. Par défaut, le proxy local vise l'API sur `http://127.0.0.1:3000`. Si elle écoute sur un autre port, définir `ZIKO_API_TARGET` **dans le terminal qui lance Angular** :
 
 ```powershell
 $env:ZIKO_API_TARGET='http://127.0.0.1:3001'
 npm start
 ```
 
-## Routes et architecture
+Le proxy ne sert qu'avec `ng serve`. Pour déployer le build, servir le frontend et relayer `/api` vers le backend depuis le même domaine. La clé `ADMIN_API_KEY` du backend ne doit jamais être intégrée au build.
 
-| Route | Fonction |
+## Parcours et routes
+
+| Route | Rôle |
 | --- | --- |
 | `/` | Catalogue paginé, création de produit et création de commande |
-| `/orders/:id` | Lecture du détail et du statut d'une commande |
+| `/orders/:id` | Récapitulatif, initiation et suivi du paiement |
+
+Le backend ne fournit pas de connexion client ni de panier : le parcours du test concerne une commande pour un seul produit. La liste des produits expose le stock physique ; une réservation simultanée peut encore faire refuser une commande, avec un message d'erreur visible.
+
+## Structure
 
 ```text
 src/app/
-  app.ts/html/scss             Shell et navigation
-  app.config.ts                Providers HTTP, router et locale française
-  app.routes.ts                Routes chargées à la demande
+  app.ts, app.html, app.scss       Cadre commun et navigation
+  app.config.ts, app.routes.ts     Providers Angular et routes chargées à la demande
   core/
-    models.ts                  Contrats produit et commande
-    api-error.ts               Messages d'erreur API
-    admin-access.ts            Clé de gestion en mémoire
-    products.ts, orders.ts     Services HTTP @Service() avec inject()
+    models.ts                     Contrats de l'API
+    api-error.ts                  Traduction des erreurs HTTP
+    admin-access.ts               Clé de gestion en mémoire
+    products.ts, orders.ts,
+    payments.ts                   Services @Service() avec inject(HttpClient)
   features/catalog/
-    home.*                     Catalogue, pagination et création de commande
-    product-card.*             Prix, stock et choix de quantité
-    create-product.*           Formulaire de gestion
+    home.*                        Catalogue, pagination et parcours de commande
+    product-card.*                Présentation d'un produit et choix de quantité
+    create-product.*              Formulaire de gestion
   features/order/
-    order.*                    Récapitulatif et lecture du statut
-proxy.conf.cjs                 Proxy de développement
+    order.*                       État de la commande et suivi de la tentative
+    payment-form.*                Saisie de l'opérateur et du numéro
+proxy.conf.cjs                    Proxy de développement
 ```
 
-Les composants sont standalone. Les pages sont chargées par `loadComponent`, les services API sont dans `core`, et les montants CDF et dates utilisent les pipes Angular. Le frontend utilise des chemins `/api` relatifs.
+Les dates et prix sont formatés avec les pipes Angular. Les pages utilisent des signaux pour l'état d'affichage et les services utilisent HttpClient pour les appels au backend.
 
 ## Vérifier
 
@@ -67,8 +77,8 @@ npm run build
 npm test
 ```
 
-Dans le navigateur, vérifier la pagination, la création d'un produit, la sélection de quantité, puis la création et la lecture d'une commande. La création de commande ne signifie pas qu'elle est payée : seul le statut fourni par le backend fait foi.
+Tester aussi dans le navigateur : création d'un produit, commande, paiement en attente, statut final, et renvoi de la même demande. Le backend doit être disponible pour ce dernier parcours.
 
-## Choix et améliorations possibles
+## Limite du prototype
 
-Le parcours commande est séparé du paiement pour que chaque évolution puisse être testée et relue. Le backend gère le prix final et le stock ; le frontend affiche la réponse, sans recalcul métier. Avec plus de temps, l'espace gestion devrait utiliser une authentification et des autorisations côté serveur. Le paiement sandbox et le suivi de sa tentative seront ajoutés dans la prochaine branche.
+L'entrée d'une clé administrateur dans le navigateur sert uniquement à la démonstration. Une boutique publique aurait besoin d'une authentification et d'autorisations côté serveur avant d'exposer ce formulaire.

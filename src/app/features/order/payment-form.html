@@ -1,0 +1,41 @@
+<form class="payment-form" [formGroup]="form" (ngSubmit)="submit()">
+  <span class="form-label">01 — CHOISIR UN OPÉRATEUR</span>
+  <div class="provider-grid">
+    <label class="provider" [class.provider--selected]="form.controls.provider.value === 'VODACOM_MPESA_COD'">
+      <input type="radio" formControlName="provider" value="VODACOM_MPESA_COD">
+      <span class="provider__mark provider__mark--mpesa">M</span>
+      <span><strong>M-Pesa</strong><small>Vodacom RDC</small></span>
+      <span class="provider__check" aria-hidden="true">✓</span>
+    </label>
+    <label class="provider" [class.provider--selected]="form.controls.provider.value === 'AIRTEL_COD'">
+      <input type="radio" formControlName="provider" value="AIRTEL_COD">
+      <span class="provider__mark provider__mark--airtel">a</span>
+      <span><strong>Airtel Money</strong><small>Airtel RDC</small></span>
+      <span class="provider__check" aria-hidden="true">✓</span>
+    </label>
+    <label class="provider" [class.provider--selected]="form.controls.provider.value === 'ORANGE_COD'">
+      <input type="radio" formControlName="provider" value="ORANGE_COD">
+      <span class="provider__mark provider__mark--orange">O</span>
+      <span><strong>Orange Money</strong><small>Orange RDC</small></span>
+      <span class="provider__check" aria-hidden="true">✓</span>
+    </label>
+  </div>
+
+  <label class="form-label" for="phone">02 — NUMÉRO MOBILE MONEY</label>
+  <div class="phone-field">
+    <span>RDC</span>
+    <input id="phone" type="tel" inputmode="numeric" formControlName="phoneNumber"
+      placeholder="243812345678" autocomplete="tel" maxlength="12"
+      aria-describedby="phone-help">
+  </div>
+  <p id="phone-help" class="field-help">Saisis 243 suivi de 9 chiffres, sans espace ni signe +.</p>
+  @if (form.controls.phoneNumber.touched && form.controls.phoneNumber.invalid) {
+    <p class="field-error" role="alert">Le numéro doit contenir 12 chiffres et commencer par 243.</p>
+  }
+
+  <button class="pay-button" type="submit" [disabled]="disabled()">
+    {{ disabled() ? 'Paiement en cours…' : 'Lancer le paiement' }}
+    <span aria-hidden="true">↗</span>
+  </button>
+  <p class="sandbox-note"><span aria-hidden="true">✳</span> Paiement de démonstration en sandbox. Aucun débit réel.</p>
+</form>

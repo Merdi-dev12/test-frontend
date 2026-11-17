@@ -2,12 +2,12 @@
   <div class="hero__copy">
     <span class="eyebrow eyebrow--light"><span class="eyebrow__line"></span> LA BOUTIQUE ZIKO · KINSHASA</span>
     <h1>Des trouvailles<br>pour <em>chaque jour.</em></h1>
-    <p>Découvre une sélection simple et vivante. Choisis un produit, sélectionne une quantité et retrouve le récapitulatif de ta commande.</p>
+    <p>Découvre une sélection simple et vivante. Choisis un produit, passe commande et suis ton paiement Mobile Money au même endroit.</p>
     <a class="hero__cta" href="#catalogue">Explorer la collection <span aria-hidden="true">↘</span></a>
     <div class="hero__meta">
-      <span><b>01</b> Découvrir</span>
-      <span><b>02</b> Choisir</span>
-      <span><b>03</b> Commander</span>
+      <span><b>01</b> Choisir</span>
+      <span><b>02</b> Commander</span>
+      <span><b>03</b> Payer</span>
     </div>
   </div>
   <div class="hero__visual" aria-hidden="true">
@@ -26,8 +26,8 @@
 
 <section class="trust-strip" aria-label="Informations de la boutique">
   <div><span class="trust-strip__icon">◇</span><span>Une sélection locale</span></div>
-  <div><span class="trust-strip__icon">↗</span><span>Prix affichés en CDF</span></div>
-  <div><span class="trust-strip__icon">✳</span><span>Commande en quelques clics</span></div>
+  <div><span class="trust-strip__icon">↗</span><span>Commande en quelques clics</span></div>
+  <div><span class="trust-strip__icon">✳</span><span>Paiement Mobile Money sandbox</span></div>
 </section>
 
 <section class="catalogue section-wrap" id="catalogue">
@@ -62,7 +62,8 @@
   } @else {
     <div class="catalogue__grid">
       @for (product of items(); track product.id; let index = $index) {
-        <app-product-card [product]="product" [tone]="index" (selected)="select($event)" />
+        <app-product-card [product]="product" [tone]="index"
+          (selected)="select($event)" />
       }
     </div>
     @if (orderingId()) {
@@ -81,10 +82,10 @@
 <section class="interlude section-wrap">
   <div class="interlude__symbol" aria-hidden="true">✳</div>
   <div>
-    <span class="eyebrow">LA COLLECTION ZIKO</span>
-    <h2>Parcourir. Découvrir.<br><em>Choisir à son rythme.</em></h2>
+    <span class="eyebrow">LE PARCOURS ZIKO</span>
+    <h2>Choisir. Commander.<br><em>Suivre en confiance.</em></h2>
   </div>
-  <p>Chaque fiche présente le prix en CDF et la quantité disponible. La commande présente ensuite son total et son statut.</p>
+  <p>Le statut de chaque paiement reste visible pendant que la sandbox traite la demande. Une réponse en attente n’est jamais présentée comme un paiement confirmé.</p>
 </section>
 
 <section class="section-wrap management-section">

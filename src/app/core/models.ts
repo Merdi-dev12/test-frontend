@@ -30,3 +30,18 @@ export interface Order {
   createdAt: string;
   paidAt: string | null;
 }
+
+export type PaymentProvider = 'VODACOM_MPESA_COD' | 'AIRTEL_COD' | 'ORANGE_COD';
+export type PaymentStatus = 'INITIATING' | 'PENDING' | 'UNKNOWN' | 'FAILED' | 'COMPLETED';
+
+export interface PaymentInput {
+  provider: PaymentProvider;
+  phoneNumber: string;
+}
+
+export interface PaymentAttempt {
+  orderId: string;
+  depositId: string;
+  status: PaymentStatus;
+  alreadyProcessed?: boolean;
+}
