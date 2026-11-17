@@ -3,8 +3,8 @@ import type { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    title: 'Bienvenue · Ziko',
-    loadComponent: () => import('./features/welcome/welcome').then((page) => page.Welcome),
+    title: 'Boutique · Ziko',
+    loadComponent: () => import('./features/catalog/home').then((page) => page.Home),
   },
   { path: '**', redirectTo: '' },
 ];
