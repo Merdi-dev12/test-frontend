@@ -1,7 +1,9 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import { apiErrorMessage } from '../../core/api-error';
 import type { Product } from '../../core/models';
+import { Orders } from '../../core/orders';
 import { Products } from '../../core/products';
 import { CreateProduct } from './create-product';
 import { ProductCard } from './product-card';
@@ -13,6 +15,8 @@ import { ProductCard } from './product-card';
 })
 export class Home {
   private readonly productsApi = inject(Products);
+  private readonly ordersApi = inject(Orders);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly items = signal<Product[]>([]);
@@ -22,6 +26,7 @@ export class Home {
   readonly loading = signal(true);
   readonly error = signal('');
   readonly notice = signal('');
+  readonly orderingId = signal<string | null>(null);
 
   constructor() {
     this.load(1);
@@ -45,8 +50,22 @@ export class Home {
     });
   }
 
+  select(event: { product: Product; quantity: number }): void {
+    if (this.orderingId()) return;
+    this.orderingId.set(event.product.id);
+    this.error.set('');
+    this.ordersApi.create(event.product.id, event.quantity)
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: (order) => void this.router.navigate(['/orders', order.id], { state: { productName: event.product.name } }),
+        error: (error: unknown) => {
+          this.orderingId.set(null);
+          this.error.set(apiErrorMessage(error));
+        },
+      });
+  }
+
   onCreated(product: Product): void {
-    this.notice.set(product.name + ' a été ajouté au catalogue.');
+    this.notice.set(`${product.name} a été ajouté au catalogue.`);
     this.load(1);
   }
 }

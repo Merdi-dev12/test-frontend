@@ -15,7 +15,18 @@
     </div>
     <h3>{{ product().name }}</h3>
     <p class="product-card__price">{{ product().priceCdf | currency:'CDF':'code':'1.0-0' }}</p>
+    <div class="product-card__bottom">
+      <div class="stepper" aria-label="Quantité">
+        <button type="button" (click)="decrease()" [disabled]="quantity() <= 1"
+          [attr.aria-label]="'Diminuer la quantité de ' + product().name">−</button>
+        <span aria-live="polite">{{ quantity() }}</span>
+        <button type="button" (click)="increase()" [disabled]="quantity() >= product().stock"
+          [attr.aria-label]="'Augmenter la quantité de ' + product().name">+</button>
+      </div>
+      <button class="card-action" type="button" (click)="choose()" [disabled]="product().stock === 0">
+        Commander <span aria-hidden="true">↗</span>
+      </button>
+    </div>
     <p class="product-card__stock">{{ product().stock }} unité{{ product().stock > 1 ? 's' : '' }} disponible{{ product().stock > 1 ? 's' : '' }}</p>
   </div>
 </article>
-

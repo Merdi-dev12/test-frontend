@@ -2,12 +2,12 @@
   <div class="hero__copy">
     <span class="eyebrow eyebrow--light"><span class="eyebrow__line"></span> LA BOUTIQUE ZIKO · KINSHASA</span>
     <h1>Des trouvailles<br>pour <em>chaque jour.</em></h1>
-    <p>Découvre une sélection simple et vivante. Parcours les produits disponibles et retrouve leurs prix en francs congolais.</p>
+    <p>Découvre une sélection simple et vivante. Choisis un produit, sélectionne une quantité et retrouve le récapitulatif de ta commande.</p>
     <a class="hero__cta" href="#catalogue">Explorer la collection <span aria-hidden="true">↘</span></a>
     <div class="hero__meta">
-      <span><b>01</b> Choisir</span>
-      <span><b>02</b> Découvrir</span>
-      <span><b>03</b> Bientôt commander</span>
+      <span><b>01</b> Découvrir</span>
+      <span><b>02</b> Choisir</span>
+      <span><b>03</b> Commander</span>
     </div>
   </div>
   <div class="hero__visual" aria-hidden="true">
@@ -27,7 +27,7 @@
 <section class="trust-strip" aria-label="Informations de la boutique">
   <div><span class="trust-strip__icon">◇</span><span>Une sélection locale</span></div>
   <div><span class="trust-strip__icon">↗</span><span>Prix affichés en CDF</span></div>
-  <div><span class="trust-strip__icon">✳</span><span>Catalogue mis à jour en direct</span></div>
+  <div><span class="trust-strip__icon">✳</span><span>Commande en quelques clics</span></div>
 </section>
 
 <section class="catalogue section-wrap" id="catalogue">
@@ -35,7 +35,7 @@
     <div>
       <span class="eyebrow"><span class="eyebrow__line"></span> NOTRE SÉLECTION</span>
       <h2>Le catalogue<span>.</span></h2>
-      <p>Des produits du quotidien à découvrir.</p>
+      <p>Des produits du quotidien, prêts à être commandés.</p>
     </div>
     <div class="section-heading__count">{{ total() }} produit{{ total() > 1 ? 's' : '' }} au catalogue</div>
   </div>
@@ -62,9 +62,12 @@
   } @else {
     <div class="catalogue__grid">
       @for (product of items(); track product.id; let index = $index) {
-        <app-product-card [product]="product" [tone]="index" />
+        <app-product-card [product]="product" [tone]="index" (selected)="select($event)" />
       }
     </div>
+    @if (orderingId()) {
+      <p class="ordering-notice" role="status">Création de la commande en cours…</p>
+    }
     @if (totalPages() > 1) {
       <div class="pagination">
         <button type="button" (click)="load(page() - 1)" [disabled]="page() <= 1">← Précédent</button>
@@ -81,11 +84,9 @@
     <span class="eyebrow">LA COLLECTION ZIKO</span>
     <h2>Parcourir. Découvrir.<br><em>Choisir à son rythme.</em></h2>
   </div>
-  <p>Chaque fiche présente le prix en CDF et la quantité disponible. Le parcours de commande sera ajouté à la prochaine étape.</p>
+  <p>Chaque fiche présente le prix en CDF et la quantité disponible. La commande présente ensuite son total et son statut.</p>
 </section>
 
 <section class="section-wrap management-section">
   <app-create-product (created)="onCreated($event)" />
 </section>
-
-
