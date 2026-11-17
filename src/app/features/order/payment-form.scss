@@ -1,0 +1,14 @@
+.payment-form { margin-top: 30px; }
+.form-label { display: block; margin: 25px 0 14px; color: #607568; font-size: 11px; font-weight: 850; letter-spacing: .13em; }
+.provider-grid { display: grid; gap: 10px; }
+.provider { display: flex; align-items: center; gap: 14px; padding: 13px; border: 1px solid #dfe6dc; border-radius: 8px; background: #fff; cursor: pointer; transition: border-color .2s, background .2s; &--selected { border-color: #5c8b6f; background: #f5faf4; } input { position: absolute; opacity: 0; width: 1px; height: 1px; } > span:nth-of-type(2) { display: flex; flex-direction: column; gap: 3px; flex: 1; } strong { color: #28483a; font-size: 13px; } small { color: #9ba99a; font-size: 10px; } }
+.provider__mark { display: grid; place-items: center; width: 35px; height: 35px; border-radius: 8px; color: #fff; font-size: 19px; font-weight: 900; &--mpesa { background: #d74844; } &--airtel { background: #ca272c; font-style: italic; } &--orange { background: #ee8c27; } }
+.provider__check { display: grid; place-items: center; width: 20px; height: 20px; border: 1px solid #c9d5c9; border-radius: 50%; color: transparent; font-size: 12px; }
+.provider--selected .provider__check { border-color: #3f8463; color: #fff; background: #3f8463; }
+.phone-field { display: flex; align-items: center; height: 50px; border: 1px solid #dce5d9; border-radius: 6px; background: #fff; span { padding: 0 13px; border-right: 1px solid #e7ece5; color: #536a5d; font-size: 13px; font-weight: 800; } input { flex: 1; min-width: 0; height: 100%; padding: 0 15px; border: 0; outline: 0; color: #244238; background: transparent; font-size: 14px; } }
+.field-help { margin: 7px 0 0; color: #92a096; font-size: 11px; }
+.field-error { margin: 7px 0 0; color: #ad4a39; font-size: 12px; }
+.pay-button { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 27px; padding: 17px 18px; border: 0; border-radius: 6px; color: #fff; background: #1c4236; font-size: 13px; font-weight: 800; &:hover { background: #2d6247; } &:disabled { opacity: .55; cursor: default; } span { font-size: 19px; } }
+.sandbox-note { display: flex; align-items: center; justify-content: center; gap: 7px; margin: 13px 0 0; color: #99a89a; font-size: 11px; span { color: #b96d4c; font-size: 16px; } }
+
+.provider:focus-within { outline: 3px solid #e97145; outline-offset: 2px; }

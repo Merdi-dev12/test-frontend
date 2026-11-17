@@ -11,7 +11,7 @@
       <div>
         <span class="eyebrow"><span class="eyebrow__line"></span> VOTRE COMMANDE</span>
         <h1>Presque entre<br><em>vos mains.</em></h1>
-        <p>Retrouve ici le récapitulatif et le statut de ta commande.</p>
+        <p>Retrouve ici le récapitulatif et l’avancement de ton paiement.</p>
       </div>
       <div class="order-heading__art" aria-hidden="true"><span>✳</span></div>
     </section>
@@ -19,31 +19,69 @@
     <div class="journey section-wrap" aria-label="Étapes de la commande">
       <div class="journey__step journey__step--done"><b>✓</b><span>Commande créée</span></div>
       <span class="journey__line"></span>
-      <div class="journey__step" [class.journey__step--done]="current.status === 'PAID'"
-        [class.journey__step--current]="current.status === 'PENDING'">
-        <b>{{ current.status === 'PAID' ? '✓' : '2' }}</b>
-        <span>{{ current.status === 'PAID' ? 'Paiement confirmé' : 'En attente de paiement' }}</span>
+      <div class="journey__step" [class.journey__step--done]="attempt()"
+        [class.journey__step--current]="!attempt()"><b>2</b><span>Paiement demandé</span></div>
+      <span class="journey__line"></span>
+      <div class="journey__step" [class.journey__step--done]="current.status === 'PAID'">
+        <b>{{ current.status === 'PAID' ? '✓' : '3' }}</b><span>Confirmation</span>
       </div>
     </div>
 
     <div class="checkout-grid section-wrap">
-      <section class="status-panel">
+      <section class="checkout-main">
         @if (current.status === 'PAID') {
-          <span class="status-panel__icon status-panel__icon--paid">✓</span>
-          <span class="eyebrow">COMMANDE PAYÉE</span>
-          <h2>Merci pour<br><em>votre commande.</em></h2>
-          <p>Le statut de cette commande a été confirmé par le backend.</p>
-          @if (current.paidAt) {
-            <small>Confirmée le {{ current.paidAt | date:'dd MMMM yyyy à HH:mm' }}</small>
-          }
+          <div class="success-panel" role="status">
+            <span class="success-panel__icon">✓</span>
+            <span class="eyebrow">PAIEMENT CONFIRMÉ</span>
+            <h2>Merci pour<br><em>votre commande.</em></h2>
+            <p>Le paiement est confirmé et le stock a été mis à jour une seule fois.</p>
+            @if (current.paidAt) {
+              <small>Confirmé le {{ current.paidAt | date:'dd MMMM yyyy à HH:mm' }}</small>
+            }
+            <a routerLink="/">Retour à la boutique ↗</a>
+          </div>
         } @else {
-          <span class="status-panel__icon">✳</span>
-          <span class="eyebrow">COMMANDE CRÉÉE</span>
-          <h2>Tout est prêt<br><em>pour la suite.</em></h2>
-          <p>Cette commande est en attente de paiement. Le paiement Mobile Money n'est pas encore disponible ici.</p>
+          <div class="payment-panel">
+            <span class="eyebrow"><span class="eyebrow__line"></span> PAIEMENT MOBILE MONEY</span>
+            <h2>Finaliser la commande<span>.</span></h2>
+            <p>Choisis ton opérateur et indique le numéro qui recevra la demande de paiement.</p>
+            @if (checking() && !attempt() && !uncertainRequest() && !cannotVerify()) {
+              <div class="pending-panel" role="status">
+                <span class="pending-panel__pulse"></span>
+                <div><strong>Recherche d'une tentative existante</strong><p>Nous vérifions la commande avant de proposer un paiement.</p></div>
+              </div>
+            } @else if (isActive() || uncertainRequest() || cannotVerify()) {
+              <div class="pending-panel" role="status">
+                <span class="pending-panel__pulse"></span>
+                <div>
+                  <strong>{{ statusLabel() }}</strong>
+                  <p>La demande reste liée à cette commande. Vérifie son statut avant toute nouvelle action.</p>
+                </div>
+              </div>
+              <button class="text-action" type="button" (click)="refreshPayment()" [disabled]="checking()">
+                {{ checking() ? 'Vérification…' : 'Vérifier le statut ↻' }}
+              </button>
+              @if (paymentInput()) {
+                <button class="text-action" type="button" (click)="resendSame()" [disabled]="busy() || checking()">
+                  Renvoyer la même demande ↗
+                </button>
+              }
+            } @else if (attempt()?.status === 'COMPLETED') {
+              <div class="pending-panel" role="status">
+                <span class="pending-panel__pulse"></span>
+                <div><strong>Paiement confirmé</strong><p>Nous actualisons le statut final de la commande.</p></div>
+              </div>
+              <button class="text-action" type="button" (click)="loadOrder(false)">Actualiser la commande ↻</button>
+            } @else {
+              @if (attempt()?.status === 'FAILED') {
+                <div class="failed-panel">La dernière tentative a échoué. Tu peux soumettre une nouvelle demande.</div>
+              }
+              <app-payment-form [disabled]="busy() || checking()" (submitted)="initiate($event)" />
+            }
+            @if (notice()) { <p class="feedback" role="status">{{ notice() }}</p> }
+            @if (error()) { <p class="error-banner" role="alert">{{ error() }}</p> }
+          </div>
         }
-        <button type="button" (click)="refresh()">Actualiser le statut ↻</button>
-        @if (error()) { <p class="error-banner" role="alert">{{ error() }}</p> }
       </section>
 
       <aside class="summary">
@@ -58,6 +96,13 @@
         <div class="summary__status" [class.summary__status--paid]="current.status === 'PAID'">
           <span></span>{{ current.status === 'PAID' ? 'Payée' : 'En attente' }}
         </div>
+        @if (attempt(); as payment) {
+          <div class="summary__payment">
+            <small>RÉFÉRENCE DE TENTATIVE</small>
+            <code>{{ payment.depositId }}</code>
+            <span>{{ statusLabel() }}</span>
+          </div>
+        }
         <p class="summary__footnote">Créée le {{ current.createdAt | date:'dd MMM yyyy à HH:mm' }}</p>
       </aside>
     </div>
