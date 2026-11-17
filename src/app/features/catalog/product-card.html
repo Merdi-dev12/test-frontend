@@ -1,0 +1,21 @@
+<article class="product-card">
+  <div class="product-art" [class.product-art--peach]="tone() % 3 === 0"
+    [class.product-art--mint]="tone() % 3 === 1"
+    [class.product-art--lavender]="tone() % 3 === 2">
+    <span class="product-art__edition">ZIKO / COLLECTION</span>
+    <span class="product-art__shape" aria-hidden="true">{{ initial() }}</span>
+    <span class="product-art__index">N° 0{{ tone() + 1 }}</span>
+  </div>
+
+  <div class="product-card__body">
+    <div class="product-card__eyebrow">
+      <span class="stock-dot" [class.stock-dot--empty]="product().stock === 0"></span>
+      {{ product().stock > 0 ? 'En stock' : 'Épuisé' }}
+      <span>Ajouté le {{ product().createdAt | date:'dd MMM yyyy' }}</span>
+    </div>
+    <h3>{{ product().name }}</h3>
+    <p class="product-card__price">{{ product().priceCdf | currency:'CDF':'code':'1.0-0' }}</p>
+    <p class="product-card__stock">{{ product().stock }} unité{{ product().stock > 1 ? 's' : '' }} disponible{{ product().stock > 1 ? 's' : '' }}</p>
+  </div>
+</article>
+

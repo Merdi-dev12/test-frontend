@@ -1,0 +1,53 @@
+<div class="create-panel" id="gestion">
+  <div class="create-panel__intro">
+    <span class="eyebrow"><span class="eyebrow__line"></span> ESPACE GESTION</span>
+    <h2>Un nouveau produit<br><em>dans la vitrine ?</em></h2>
+    <p>Ajoute un article pour le voir apparaître dans le catalogue. Les prix sont indiqués en francs congolais.</p>
+    <div class="create-panel__note">
+      <span aria-hidden="true">✳</span>
+      <span>La clé de gestion reste uniquement en mémoire pendant cette session.</span>
+    </div>
+  </div>
+
+  <form class="product-form" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="form-header">
+      <span>01 / CRÉATION</span>
+      <span>Champs requis <b>*</b></span>
+    </div>
+
+    <label for="product-name">Nom du produit <span>*</span></label>
+    <input id="product-name" type="text" formControlName="name" maxlength="200"
+      placeholder="Ex. Savon artisanal" autocomplete="off">
+    @if (form.controls.name.touched && form.controls.name.invalid) {
+      <small class="field-error">Saisis un nom de produit.</small>
+    }
+
+    <div class="form-grid">
+      <div>
+        <label for="product-price">Prix en CDF <span>*</span></label>
+        <input id="product-price" type="number" min="0" step="1" formControlName="priceCdf" placeholder="5000">
+      </div>
+      <div>
+        <label for="product-stock">Stock <span>*</span></label>
+        <input id="product-stock" type="number" min="0" step="1" formControlName="stock" placeholder="10">
+      </div>
+    </div>
+    @if ((form.controls.priceCdf.touched && form.controls.priceCdf.invalid) ||
+         (form.controls.stock.touched && form.controls.stock.invalid)) {
+      <small class="field-error">Le prix et le stock doivent être des entiers positifs ou nuls.</small>
+    }
+
+    <label for="admin-key">Clé de gestion</label>
+    <input id="admin-key" type="password" formControlName="adminKey"
+      placeholder="Clé administrateur du backend" autocomplete="off">
+    <p class="field-hint">Requise lorsque le backend protège la création des produits.</p>
+
+    @if (error()) {
+      <p class="form-alert" role="alert">{{ error() }}</p>
+    }
+    <button class="submit-button" type="submit" [disabled]="busy()">
+      {{ busy() ? 'Ajout en cours…' : 'Ajouter au catalogue' }}
+      <span aria-hidden="true">↗</span>
+    </button>
+  </form>
+</div>
