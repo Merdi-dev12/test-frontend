@@ -5,7 +5,7 @@
     <p>Ajoute un article pour le voir apparaître dans le catalogue. Les prix sont indiqués en francs congolais.</p>
     <div class="create-panel__note">
       <span aria-hidden="true">✳</span>
-      <span>La clé de gestion reste uniquement en mémoire pendant cette session.</span>
+      <span>La clé administrateur reste uniquement en mémoire pendant cette session.</span>
     </div>
   </div>
 
@@ -37,10 +37,10 @@
       <small class="field-error">Le prix et le stock doivent être des entiers positifs ou nuls.</small>
     }
 
-    <label for="admin-key">Clé de gestion</label>
+    <label for="admin-key">Clé administrateur du backend</label>
     <input id="admin-key" type="password" formControlName="adminKey"
       placeholder="Clé administrateur du backend" autocomplete="off">
-    <p class="field-hint">Requise lorsque le backend protège la création des produits.</p>
+    <p class="field-hint">Saisis la valeur ADMIN_API_KEY du fichier .env du backend pour créer un produit.</p>
 
     @if (error()) {
       <p class="form-alert" role="alert">{{ error() }}</p>

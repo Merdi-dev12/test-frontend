@@ -25,12 +25,14 @@
   <div class="phone-field">
     <span>RDC</span>
     <input id="phone" type="tel" inputmode="numeric" formControlName="phoneNumber"
-      placeholder="243812345678" autocomplete="tel" maxlength="12"
+      placeholder="0813456789" autocomplete="tel-national" maxlength="10"
       aria-describedby="phone-help">
   </div>
-  <p id="phone-help" class="field-help">Saisis 243 suivi de 9 chiffres, sans espace ni signe +.</p>
+  <p id="phone-help" class="field-help">Saisis 10 chiffres commençant par 0. Le 0 sera remplacé automatiquement par +243.</p>
   @if (form.controls.phoneNumber.touched && form.controls.phoneNumber.invalid) {
-    <p class="field-error" role="alert">Le numéro doit contenir 12 chiffres et commencer par 243.</p>
+    <p class="field-error" role="alert">Saisis un numéro local de 10 chiffres commençant par 0.</p>
+  } @else if (form.controls.phoneNumber.touched && form.hasError('providerMismatch')) {
+    <p class="field-error" role="alert">Ce préfixe ne correspond pas à l’opérateur choisi.</p>
   }
 
   <button class="pay-button" type="submit" [disabled]="disabled()">
